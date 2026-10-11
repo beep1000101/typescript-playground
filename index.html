@@ -5,85 +5,6 @@
     <meta charset="utf-8">
     <title>Tic Tac Toe</title>
 
-    <style>
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background-color: #0f1117;
-            color: white;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 28px;
-
-            font-family: Arial, sans-serif;
-        }
-
-        #grid-div {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            width: min(300px, 85vw);
-            gap: 8px;
-        }
-
-        .cell {
-            aspect-ratio: 1;
-            border: 2px solid #444b5c;
-            border-radius: 10px;
-            background-color: #1b2030;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            font-size: 42px;
-            font-weight: bold;
-            cursor: pointer;
-
-            transition: background-color 0.15s, border-color 0.15s;
-        }
-
-        .cell:hover {
-            background-color: #293247;
-            border-color: #7c8da8;
-        }
-
-        .cell.winning {
-            background-color: #14532d;
-            border-color: #22c55e;
-        }
-
-        #status {
-            font-size: 20px;
-            font-weight: bold;
-            min-height: 24px;
-        }
-
-        #reset-button {
-            padding: 12px 28px;
-            background-color: #6366f1;
-            color: white;
-
-            border: none;
-            border-radius: 8px;
-
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-
-            transition: background-color 0.2s, transform 0.1s;
-        }
-
-        #reset-button:hover {
-            background-color: #818cf8;
-        }
-
-        #reset-button:active {
-            transform: scale(0.96);
-        }
-    </style>
 </head>
 
 <body>
@@ -91,121 +12,216 @@
     <div id="grid-div"></div>
     <button id="reset-button">Reset Game</button>
 
-    <script>
-        const board = new Int8Array(9);
-
-        let currentPlayer = "O";
-        let gameOver = false;
-        let movesPlayed = 0;
-
-        const gridElement = document.getElementById("grid-div");
-        const resetButton = document.getElementById("reset-button");
-        const statusElement = document.getElementById("status");
-
-        function resetBoard() {
-            board.fill(0);
-
-            const cells = document.querySelectorAll(".cell");
-
-            cells.forEach(cell => {
-                cell.textContent = "";
-                cell.classList.remove("winning");
-            });
-
-            currentPlayer = "O";
-            gameOver = false;
-            movesPlayed = 0;
-
-            statusElement.textContent = "Player O's turn";
-        }
-
-        function checkWinner(boardArray, index) {
-            const row = Math.floor(index / 3);
-            const col = index % 3;
-            const symbol = boardArray[index];
-
-            // Check the row containing the last move
-            const rowCells = [row * 3, row * 3 + 1, row * 3 + 2];
-
-            if (rowCells.every(i => boardArray[i] === symbol)) {
-                return rowCells;
-            }
-
-            // Check the column containing the last move
-            const colCells = [col, col + 3, col + 6];
-
-            if (colCells.every(i => boardArray[i] === symbol)) {
-                return colCells;
-            }
-
-            // Main diagonal
-            if (row === col) {
-                const diagonal = [0, 4, 8];
-
-                if (diagonal.every(i => boardArray[i] === symbol)) {
-                    return diagonal;
-                }
-            }
-
-            // Anti-diagonal
-            if (row + col === 2) {
-                const diagonal = [2, 4, 6];
-
-                if (diagonal.every(i => boardArray[i] === symbol)) {
-                    return diagonal;
-                }
-            }
-
-            return null;
-        }
-
-        function setSymbol(element, index) {
-            if (gameOver || board[index] !== 0) {
-                return;
-            }
-
-            const symbol = currentPlayer === "X" ? 1 : -1;
-
-            board[index] = symbol;
-            element.textContent = currentPlayer;
-            movesPlayed++;
-
-            const winningCells = checkWinner(board, index);
-
-            if (winningCells !== null) {
-                gameOver = true;
-
-                statusElement.textContent = `Player ${currentPlayer} wins!`;
-
-                const cells = gridElement.querySelectorAll(".cell");
-
-                winningCells.forEach(i => {
-                    cells[i].classList.add("winning");
-                });
-
-                return;
-            }
-
-            if (movesPlayed === 9) {
-                gameOver = true;
-                statusElement.textContent = "It's a draw!";
-                return;
-            }
-
-            currentPlayer = currentPlayer === "X" ? "O" : "X";
-            statusElement.textContent = `Player ${currentPlayer}'s turn`;
-        }
-
-        resetButton.addEventListener("click", resetBoard);
-
-        for (let i = 0; i < 9; i++) {
-            const element = document.createElement("div");
-            element.classList.add("cell");
-
-            element.addEventListener("click", () => setSymbol(element, i));
-
-            gridElement.appendChild(element);
-        }
-    </script>
 </body>
 </html>
+<style>
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background-color: #0f1117;
+        color: white;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 28px;
+
+        font-family: Arial, sans-serif;
+    }
+
+    #grid-div {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        width: min(300px, 85vw);
+        gap: 8px;
+    }
+
+    .cell {
+        aspect-ratio: 1;
+        border: 2px solid #444b5c;
+        border-radius: 10px;
+        background-color: #1b2030;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        font-size: 42px;
+        font-weight: bold;
+        cursor: pointer;
+
+        transition: background-color 0.15s, border-color 0.15s;
+    }
+
+    .cell:hover {
+        background-color: #293247;
+        border-color: #7c8da8;
+    }
+
+    .cell.winning {
+        background-color: #14532d;
+        border-color: #22c55e;
+    }
+
+    #status {
+        font-size: 20px;
+        font-weight: bold;
+        min-height: 24px;
+    }
+
+    #reset-button {
+        padding: 12px 28px;
+        background-color: #6366f1;
+        color: white;
+
+        border: none;
+        border-radius: 8px;
+
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+
+        transition: background-color 0.2s, transform 0.1s;
+    }
+
+    #reset-button:hover {
+        background-color: #818cf8;
+    }
+
+    #reset-button:active {
+        transform: scale(0.96);
+    }
+</style>
+<script>
+    const board = new Int8Array(9);
+    
+    let currentPlayer = "O";
+    let gameOver = false;
+    let movesPlayed = 0;
+
+    const gridElement = document.getElementById("grid-div");
+    const resetButton = document.getElementById("reset-button");
+    const statusElement = document.getElementById("status");
+
+    function resetBoard() {
+        board.fill(0);
+
+        const cells = document.querySelectorAll(".cell");
+
+        cells.forEach(cell => {
+            cell.textContent = "";
+            cell.classList.remove("winning");
+        });
+
+        currentPlayer = "O";
+        gameOver = false;
+        movesPlayed = 0;
+
+        statusElement.textContent = "Player O's turn";
+    }
+
+function checkWinner(board, lastMoveIndex, boardSize = 3, winLength = 3) {
+    const lastMoveRow = Math.floor(lastMoveIndex / boardSize);
+    const lastMoveColumn = lastMoveIndex % boardSize;
+    const playerSymbol = board[lastMoveIndex];
+
+    if (playerSymbol === 0) {
+        return null;
+    }
+
+    const directions = [
+        [0, 1],   // Horizontal
+        [1, 0],   // Vertical
+        [1, 1],   // Main diagonal
+        [1, -1]   // Anti-diagonal
+    ];
+
+    function scanDirection(rowStep, columnStep) {
+        const matchingCells = [];
+
+        let currentRow = lastMoveRow + rowStep;
+        let currentColumn = lastMoveColumn + columnStep;
+
+        while (
+            currentRow >= 0 &&
+            currentRow < boardSize &&
+            currentColumn >= 0 &&
+            currentColumn < boardSize &&
+            board[currentRow * boardSize + currentColumn] === playerSymbol
+        ) {
+            matchingCells.push(currentRow * boardSize + currentColumn);
+
+            currentRow += rowStep;
+            currentColumn += columnStep;
+        }
+
+        return matchingCells;
+    }
+
+    for (const [rowStep, columnStep] of directions) {
+        const forwardCells = scanDirection(rowStep, columnStep);
+        const backwardCells = scanDirection(-rowStep, -columnStep);
+
+        const winningLine = [
+            ...backwardCells.reverse(),
+            lastMoveIndex,
+            ...forwardCells
+        ];
+
+        if (winningLine.length >= winLength) {
+            return winningLine;
+        }
+    }
+
+    return null;
+}
+
+    function setSymbol(element, index) {
+        if (gameOver || board[index] !== 0) {
+            return;
+        }
+
+        const symbol = currentPlayer === "X" ? 1 : -1;
+
+        board[index] = symbol;
+        element.textContent = currentPlayer;
+        movesPlayed++;
+
+        const winningCells = checkWinner(board, index);
+
+        if (winningCells !== null) {
+            gameOver = true;
+
+            statusElement.textContent = `Player ${currentPlayer} wins!`;
+
+            const cells = gridElement.querySelectorAll(".cell");
+
+            winningCells.forEach(i => {
+                cells[i].classList.add("winning");
+            });
+
+            return;
+        }
+
+        if (movesPlayed === 9) {
+            gameOver = true;
+            statusElement.textContent = "It's a draw!";
+            return;
+        }
+
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        statusElement.textContent = `Player ${currentPlayer}'s turn`;
+    }
+
+    resetButton.addEventListener("click", resetBoard);
+
+    for (let i = 0; i < 9; i++) {
+        const element = document.createElement("div");
+        element.classList.add("cell");
+
+        element.addEventListener("click", () => setSymbol(element, i));
+
+        gridElement.appendChild(element);
+    }
+</script>
