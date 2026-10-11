@@ -43,61 +43,61 @@
         statusElement.textContent = "Player O's turn";
     }
 
-function checkWinner(board, lastMoveIndex, boardSize = 3, winLength = 3) {
-    const lastMoveRow = Math.floor(lastMoveIndex / boardSize);
-    const lastMoveColumn = lastMoveIndex % boardSize;
-    const playerSymbol = board[lastMoveIndex];
+    function checkWinner(board, lastMoveIndex, boardSize = 3, winLength = 3) {
+        const lastMoveRow = Math.floor(lastMoveIndex / boardSize);
+        const lastMoveColumn = lastMoveIndex % boardSize;
+        const playerSymbol = board[lastMoveIndex];
 
-    if (playerSymbol === 0) {
-        return null;
-    }
-
-    const directions = [
-        [0, 1],   // Horizontal
-        [1, 0],   // Vertical
-        [1, 1],   // Main diagonal
-        [1, -1]   // Anti-diagonal
-    ];
-
-    function scanDirection(rowStep, columnStep) {
-        const matchingCells = [];
-
-        let currentRow = lastMoveRow + rowStep;
-        let currentColumn = lastMoveColumn + columnStep;
-
-        while (
-            currentRow >= 0 &&
-            currentRow < boardSize &&
-            currentColumn >= 0 &&
-            currentColumn < boardSize &&
-            board[currentRow * boardSize + currentColumn] === playerSymbol
-        ) {
-            matchingCells.push(currentRow * boardSize + currentColumn);
-
-            currentRow += rowStep;
-            currentColumn += columnStep;
+        if (playerSymbol === 0) {
+            return null;
         }
 
-        return matchingCells;
-    }
-
-    for (const [rowStep, columnStep] of directions) {
-        const forwardCells = scanDirection(rowStep, columnStep);
-        const backwardCells = scanDirection(-rowStep, -columnStep);
-
-        const winningLine = [
-            ...backwardCells.reverse(),
-            lastMoveIndex,
-            ...forwardCells
+        const directions = [
+            [0, 1],   // Horizontal
+            [1, 0],   // Vertical
+            [1, 1],   // Main diagonal
+            [1, -1]   // Anti-diagonal
         ];
 
-        if (winningLine.length >= winLength) {
-            return winningLine;
-        }
-    }
+        function scanDirection(rowStep, columnStep) {
+            const matchingCells = [];
 
-    return null;
-}
+            let currentRow = lastMoveRow + rowStep;
+            let currentColumn = lastMoveColumn + columnStep;
+
+            while (
+                currentRow >= 0 &&
+                currentRow < boardSize &&
+                currentColumn >= 0 &&
+                currentColumn < boardSize &&
+                board[currentRow * boardSize + currentColumn] === playerSymbol
+            ) {
+                matchingCells.push(currentRow * boardSize + currentColumn);
+
+                currentRow += rowStep;
+                currentColumn += columnStep;
+            }
+
+            return matchingCells;
+        }
+
+        for (const [rowStep, columnStep] of directions) {
+            const forwardCells = scanDirection(rowStep, columnStep);
+            const backwardCells = scanDirection(-rowStep, -columnStep);
+
+            const winningLine = [
+                ...backwardCells.reverse(),
+                lastMoveIndex,
+                ...forwardCells
+            ];
+
+            if (winningLine.length >= winLength) {
+                return winningLine;
+            }
+        }
+
+        return null;
+    }
 
     function setSymbol(element, index) {
         if (gameOver || board[index] !== 0) {
