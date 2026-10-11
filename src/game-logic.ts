@@ -1,4 +1,8 @@
-export type Cell = -1 | 0 | 1;
+export enum Cell {
+    O = -1,
+    Empty = 0,
+    X = 1,
+}
 
 export function checkWinner(
     board: Cell[],

@@ -1,10 +1,13 @@
-import { checkWinner, type Cell } from "./game-logic.ts";
+import { checkWinner, type Cell } from "./game-logic.js";
 
-type CurrentPlayer = "O" | "X";
+enum CurrentPlayer {
+    O = "O",
+    X = "X",
+}
 
 const board: Cell[] = Array<Cell>(9).fill(0);
 
-let currentPlayer: CurrentPlayer = "O";
+let currentPlayer: CurrentPlayer = CurrentPlayer.O;
 let gameOver: boolean = false;
 let movesPlayed: number = 0;
 
@@ -30,7 +33,7 @@ function resetBoard(): void {
         cell.classList.remove("winning");
     });
 
-    currentPlayer = "O";
+    currentPlayer = CurrentPlayer.O;
     gameOver = false;
     movesPlayed = 0;
 
@@ -42,7 +45,7 @@ function setSymbol(element: HTMLDivElement, index: number) {
         return;
     }
 
-    const symbol = currentPlayer === "X" ? 1 : -1;
+    const symbol = currentPlayer === CurrentPlayer.X ? 1 : -1;
 
     board[index] = symbol;
     element.textContent = currentPlayer;
@@ -73,7 +76,7 @@ function setSymbol(element: HTMLDivElement, index: number) {
         return;
     }
 
-    currentPlayer = currentPlayer === "X" ? "O" : "X";
+    currentPlayer = currentPlayer === CurrentPlayer.X ? CurrentPlayer.O : CurrentPlayer.X;
     statusElement.textContent = `Player ${currentPlayer}'s turn`;
 }
 
