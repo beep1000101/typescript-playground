@@ -1,4 +1,10 @@
-export function checkWinner(board, lastMoveIndex, boardSize = 3, winLength = 3) {
+export type Cell = -1 | 0 | 1;
+
+export function checkWinner(
+    board: Cell[],
+    lastMoveIndex: number,
+    boardSize = 3,
+    winLength = 3): number[] | null {
     const lastMoveRow = Math.floor(lastMoveIndex / boardSize);
     const lastMoveColumn = lastMoveIndex % boardSize;
     const playerSymbol = board[lastMoveIndex];
@@ -7,14 +13,17 @@ export function checkWinner(board, lastMoveIndex, boardSize = 3, winLength = 3) 
         return null;
     }
 
-    const directions = [
+    const directions: [number, number][] = [
         [0, 1],
         [1, 0],
         [1, 1],
         [1, -1]
     ];
 
-    function scanDirection(rowStep, columnStep) {
+    function scanDirection(
+        rowStep: number,
+        columnStep: number,
+    ) {
         const matchingCells = [];
 
         let currentRow = lastMoveRow + rowStep;

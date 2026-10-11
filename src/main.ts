@@ -1,19 +1,29 @@
-import { checkWinner } from "./game-logic.js";
+import { checkWinner, type Cell } from "./game-logic.ts";
 
-const board = new Int8Array(9);
+type CurrentPlayer = "O" | "X";
 
-let currentPlayer = "O";
-let gameOver = false;
-let movesPlayed = 0;
+const board: Cell[] = Array<Cell>(9).fill(0);
 
-const gridElement = document.getElementById("grid-div");
-const resetButton = document.getElementById("reset-button");
-const statusElement = document.getElementById("status");
+let currentPlayer: CurrentPlayer = "O";
+let gameOver: boolean = false;
+let movesPlayed: number = 0;
 
-function resetBoard() {
+function getRequiredElement<T extends Element>(selector: string): T {
+    const element = document.querySelector<T>(selector);
+    if (element === null) {
+        throw new Error(`Missing required element: ${selector}`);
+    }
+    return element;
+}
+
+const gridElement = getRequiredElement<HTMLDivElement>("#grid-div");
+const resetButton = getRequiredElement<HTMLButtonElement>("#reset-button");
+const statusElement = getRequiredElement<HTMLDivElement>("#status");
+
+function resetBoard(): void {
     board.fill(0);
 
-    const cells = gridElement.querySelectorAll(".cell");
+    const cells = gridElement.querySelectorAll<HTMLDivElement>(".cell");
 
     cells.forEach(cell => {
         cell.textContent = "";
@@ -27,7 +37,7 @@ function resetBoard() {
     statusElement.textContent = "Player O's turn";
 }
 
-function setSymbol(element, index) {
+function setSymbol(element: HTMLDivElement, index: number) {
     if (gameOver || board[index] !== 0) {
         return;
     }
@@ -45,10 +55,13 @@ function setSymbol(element, index) {
 
         statusElement.textContent = `Player ${currentPlayer} wins!`;
 
-        const cells = gridElement.querySelectorAll(".cell");
+        const cells = gridElement.querySelectorAll<HTMLDivElement>(".cell");
 
-        winningCells.forEach(i => {
-            cells[i].classList.add("winning");
+        winningCells.forEach(index => {
+            const cell = cells.item(index);
+            if (cell !== null) {
+                cell.classList.add("winning");
+            }
         });
 
         return;
