@@ -51,6 +51,13 @@ export class DenseMLP implements DenseMLPInterface {
             weightCount += inputSize * outputSize;
             biasCount += outputSize;
         }
+        if (weights.length !== weightCount) {
+            throw new Error(`Expected ${weightCount} weights, got ${weights.length}`);
+        }
+
+        if (biases.length !== biasCount) {
+            throw new Error(`Expected ${biasCount} biases, got ${biases.length}`);
+        }
 
         this.layers = [...layers];
         this.weights = weights;
