@@ -8,7 +8,8 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "noUncheckedIndexedAccess": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["bun"]
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "neural_net_example.ts"]
 }
