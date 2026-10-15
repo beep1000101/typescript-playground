@@ -1,4 +1,4 @@
-import { DenseMLP } from 'src/shared/ml/neural_network.ts'
+import { DenseMLP } from './ml/neural-network'
 
 type Predictor = (input: Float32Array) => Float32Array;
 type DenseMLPPredictor = DenseMLP["forwardPass"];
