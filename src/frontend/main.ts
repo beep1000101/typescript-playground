@@ -1,4 +1,4 @@
-import { checkWinner, type Cell } from "../shared/game-logic.js";
+import { checkWinner, type Cell } from "../shared/game-logic";
 
 enum CurrentPlayer {
     O = "O",
