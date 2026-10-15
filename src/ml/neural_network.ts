@@ -17,10 +17,6 @@ export class DenseMLP implements DenseMLPInterface {
     activationFunction: ActivationFunction;
     output: Float32Array;
 
-    // TODO: DenseMLP requires an output property that isn't declared here.
-    // Consider whether storing the last output is useful, given that
-    // forwardPass already returns it.
-
     constructor(
         layers: number[],
         weights: Float32Array,
@@ -28,12 +24,12 @@ export class DenseMLP implements DenseMLPInterface {
         activationFunction: ActivationFunction = Math.tanh,
     ) {
         const inputNumber: number | undefined = layers[0]
-        if (inputNumber == undefined) {
+        if (inputNumber === undefined) {
             throw new Error("There are no layers passed!")
         }
         const outputSize: number | undefined = layers.at(-1);
         const numberOfLayers: number = layers.length
-        if (outputSize == undefined || numberOfLayers < 2) {
+        if (outputSize === undefined || numberOfLayers < 2) {
             throw new Error("MLP requires at least 2 layers");
         }
 
@@ -76,15 +72,31 @@ export class DenseMLP implements DenseMLPInterface {
         const maxLayerIndex: number = numberOfLayers - 1;
         for (let currentLayerIndex = 0; currentLayerIndex < maxLayerIndex; currentLayerIndex++) {
             const currentLayerSize: number | undefined = this.layers[currentLayerIndex];
+            if (currentLayerSize == undefined) {
+                throw new Error("There is no current layer to iterate over!");
+            }
             const nextLayerSize: number | undefined = this.layers[currentLayerIndex + 1];
-            nextInput = new Float32Array(nextLayerSize!); // TODO: take care of ! later
-            for (let nextLayerNeuronIndex = 0; nextLayerNeuronIndex < nextLayerSize!; nextLayerNeuronIndex++) { // TODO:  take care of ! later
-                for (let currentLayerNeuronIndex = 0; currentLayerNeuronIndex < currentLayerSize!; currentLayerNeuronIndex++) { // TODO:  take care of ! later
-                    nextInput[nextLayerNeuronIndex] += currentInput[currentLayerNeuronIndex] * this.weights[weightTraversalOffset];
+            if (nextLayerSize == undefined) {
+                throw new Error("There is no next layer to iterate over!");
+            }
+            nextInput = new Float32Array(nextLayerSize);
+            for (let nextLayerNeuronIndex = 0; nextLayerNeuronIndex < nextLayerSize; nextLayerNeuronIndex++) {
+                let weightedSum: number = 0;
+                for (let currentLayerNeuronIndex = 0; currentLayerNeuronIndex < currentLayerSize; currentLayerNeuronIndex++) {
+                    const activation: number | undefined = currentInput[currentLayerNeuronIndex];
+                    const weight: number | undefined = this.weights[weightTraversalOffset];
+                    if (activation === undefined || weight === undefined) {
+                        throw new Error("Activation or weight is undefined")
+                    }
+                    weightedSum += activation * weight;
                     weightTraversalOffset++;
                 }
-                nextInput[nextLayerNeuronIndex] += this.biases[biasTraversalOffset];
-                nextInput[nextLayerNeuronIndex] = this.activationFunction(nextInput[nextLayerNeuronIndex]);
+                const bias: number | undefined = this.biases[biasTraversalOffset];
+                if (bias === undefined) {
+                    throw new Error("Undefined bias!");
+                }
+                const activationFunctionInput: number = weightedSum + bias;
+                nextInput[nextLayerNeuronIndex] = this.activationFunction(activationFunctionInput);
                 biasTraversalOffset++;
             }
             currentInput = nextInput;
