@@ -90,9 +90,6 @@ export class DenseMLP implements DenseMLPInterface {
         this.inputNumber = inputNumber;
     }
 
-    // static fromJSON(json: string): DenseMLP {
-    //     return DenseMLP(...);
-    // }
     toJSON(): MLPState {
         const activationFunctionName: ActivationName | undefined = ACTIVATION_NAME.get(this.activationFunction)
         if (activationFunctionName === undefined) {
