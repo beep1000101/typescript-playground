@@ -70,6 +70,7 @@ export class DenseMLP implements DenseMLPInterface {
         let biasTraversalOffset: number = 0;
         const numberOfLayers: number = this.layers.length;
         const maxLayerIndex: number = numberOfLayers - 1;
+
         for (let currentLayerIndex = 0; currentLayerIndex < maxLayerIndex; currentLayerIndex++) {
             const currentLayerSize: number | undefined = this.layers[currentLayerIndex];
             if (currentLayerSize == undefined) {
@@ -79,6 +80,7 @@ export class DenseMLP implements DenseMLPInterface {
             if (nextLayerSize == undefined) {
                 throw new Error("There is no next layer to iterate over!");
             }
+
             nextInput = new Float32Array(nextLayerSize);
             for (let nextLayerNeuronIndex = 0; nextLayerNeuronIndex < nextLayerSize; nextLayerNeuronIndex++) {
                 let weightedSum: number = 0;
@@ -88,6 +90,7 @@ export class DenseMLP implements DenseMLPInterface {
                     if (activation === undefined || weight === undefined) {
                         throw new Error("Activation or weight is undefined")
                     }
+
                     weightedSum += activation * weight;
                     weightTraversalOffset++;
                 }
@@ -95,6 +98,7 @@ export class DenseMLP implements DenseMLPInterface {
                 if (bias === undefined) {
                     throw new Error("Undefined bias!");
                 }
+
                 const activationFunctionInput: number = weightedSum + bias;
                 nextInput[nextLayerNeuronIndex] = this.activationFunction(activationFunctionInput);
                 biasTraversalOffset++;
