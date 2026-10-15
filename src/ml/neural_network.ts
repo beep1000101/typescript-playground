@@ -107,5 +107,4 @@ export class DenseMLP implements DenseMLPInterface {
         }
         return nextInput;
     }
-
 }
