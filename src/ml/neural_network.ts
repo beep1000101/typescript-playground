@@ -9,6 +9,29 @@ export interface DenseMLPInterface {
     output: Float32Array;
 }
 
+export interface MLPState {
+    layers: number[];
+    weights: number[];
+    biases: number[];
+    activation: string;
+}
+
+const ACTIVATIONS = {
+    tanh: Math.tanh,
+    relu: (x: number) => Math.max(0, x),
+    sigmoid: (x: number) => 1 / (1 + Math.exp(-x)),
+} satisfies Record<string, ActivationFunction>;
+
+type ActivationName = keyof typeof ACTIVATIONS;
+
+const ACTIVATION_NAME = new Map<ActivationFunction, ActivationName>(
+    (Object.keys(ACTIVATIONS) as ActivationName[]).map(name => [ACTIVATIONS[name], name])
+);
+
+function isActivationName(name: string): name is ActivationName {
+    return Object.hasOwn(ACTIVATIONS, name);
+}
+
 export class DenseMLP implements DenseMLPInterface {
     layers: number[];
     inputNumber: number;
@@ -66,9 +89,41 @@ export class DenseMLP implements DenseMLPInterface {
         this.output = new Float32Array(outputSize);
         this.inputNumber = inputNumber;
     }
+
+    // static fromJSON(json: string): DenseMLP {
+    //     return DenseMLP(...);
+    // }
+    toJSON(): MLPState {
+        const activationFunctionName: ActivationName | undefined = ACTIVATION_NAME.get(this.activationFunction)
+        if (activationFunctionName === undefined) {
+            throw new Error("Activation function name is undefined!");
+        }
+        return {
+            layers: [...this.layers],
+            weights: Array.from(this.weights),
+            biases: Array.from(this.biases),
+            activation: activationFunctionName,
+        }
+    }
+
+    static fromJSON(json: string): DenseMLP {
+        const state = JSON.parse(json) as MLPState;
+        if (!isActivationName(state.activation)) {
+            throw new Error("Unknown activation: ${state.activation}");
+        }
+        const activationFunction = ACTIVATIONS[state.activation];
+
+        return new DenseMLP(
+            state.layers,
+            new Float32Array(state.weights),
+            new Float32Array(state.biases),
+            activationFunction,
+        );
+    }
+
     forwardPass(input: Float32Array): Float32Array {
         if (input.length !== this.inputNumber) {
-            throw new Error(`Expected ${this.inputNumber} inputs; received ${input.length}.`);
+            throw new Error("Expected ${this.inputNumber} inputs; received ${input.length}.");
         }
 
         let currentInput: Float32Array = input;
