@@ -1,4 +1,3 @@
-bun build ./src/main.ts ./src/game-logic.ts \
+bun build ./src/frontend/main.ts \
     --outdir ./dist \
-    --target browser \
-    --no-bundle
+    --target browser
